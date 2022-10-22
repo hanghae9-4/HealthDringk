@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @AllArgsConstructor
-public class MemberRequestDto {
+public class LoginRequestDto {
 
     @NotBlank
     private String name;
@@ -17,9 +17,5 @@ public class MemberRequestDto {
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
-    @NotBlank
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordCheck;
 
 }

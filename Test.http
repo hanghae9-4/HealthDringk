@@ -1,0 +1,31 @@
+GET http://localhost:8080/member/renew
+Accept: application/json
+Refresh-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhYmNkbWFuIiwiZXhwIjoxNjY2NTM5OTU3LCJpYXQiOjE2NjY0Mzk5NTd9.HjP0VAH5VWX3hwaHDBDGo9SlNT14e6XlLbBhyMeRSPI
+
+
+###
+
+POST http://localhost:8080/member/login
+Content-Type: application/json
+
+{
+  "name" : "abcdman",
+  "password": "dcba1234!"
+}
+
+###
+
+POST http://localhost:8080/member/signup
+Content-Type: application/json
+
+{
+  "name" : "abcdman",
+  "password": "dcba1234!",
+  "passwordCheck": "dcba1234!"
+}
+###
+
+
+
+
+
