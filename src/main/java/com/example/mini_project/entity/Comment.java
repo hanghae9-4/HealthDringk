@@ -1,12 +1,18 @@
 package com.example.mini_project.entity;
 
+import com.example.mini_project.dto.requestDto.CommentRequestDto;
 import com.example.mini_project.util.TimeStamped;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
+@Getter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment extends TimeStamped {
@@ -18,11 +24,24 @@ public class Comment extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boardId", nullable = false)
+    private Board board;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
-    @JoinColumn(name = "boardId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
+
+    public boolean validateMember(Member member) {
+
+        return !this.member.equals(member);
+    }
+
+
+    public void update(CommentRequestDto commentRequestDto) {
+
+        this.content = commentRequestDto.getComment();
+
+    }
 }

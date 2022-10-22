@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class MemberRequestDto {
 
@@ -17,9 +19,5 @@ public class MemberRequestDto {
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
-    @NotBlank
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String passwordCheck;
 
 }

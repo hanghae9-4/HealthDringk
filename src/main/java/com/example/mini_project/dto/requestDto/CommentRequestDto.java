@@ -1,4 +1,5 @@
-package com.example.mini_project.entity;
+package com.example.mini_project.dto.requestDto;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Error {
-
-    private String field;
-
-    private String message;
-
+public class CommentRequestDto {
+    private String comment;
 }
