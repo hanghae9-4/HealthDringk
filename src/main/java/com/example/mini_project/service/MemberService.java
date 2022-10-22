@@ -41,10 +41,6 @@ public class MemberService {
             return ResponseDto.fail("DUPLICATED_MEMBER", "존재하는 ID 입니다.");
         }
 
-        if(!memberRequestDto.getPassword().equals(memberRequestDto.getPasswordCheck())){
-            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
-        }
-
         Member member = Member.builder()
                 .name(memberRequestDto.getName())
                 .password(passwordEncoder.encode(memberRequestDto.getPassword()))
@@ -107,7 +103,7 @@ public class MemberService {
             return ResponseDto.fail("NOT_FOUND","존재하지 않는 회원입니다.");
         }
 
-        List<Board> boardList = boardRepository.findAllByMemberOrderByCreatedAtDesc(member);
+        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
         for(Board board : boardList){
             BoardListResponseDto boardListResponseDto = new BoardListResponseDto(board);
@@ -117,6 +113,7 @@ public class MemberService {
                 MypageResponseDto.builder()
                         .name(member.getName())
                         .image(member.getImage())
+                        .boardListResponseDtoList(boardListResponseDtoList)
                         .build()
         );
     }

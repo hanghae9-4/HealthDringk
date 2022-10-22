@@ -1,17 +1,19 @@
 package com.example.mini_project.dto.requestDto;
 
+
+import com.example.mini_project.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangeImageRequestDto {
+public class BoardRequestDto {
 
-    @NotBlank
+    private String title;
     private String image;
+    private String content;
+    private Category catagory;
 
 }

@@ -1,24 +1,28 @@
 package com.example.mini_project.entity;
 
+
+import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.util.TimeStamped;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Board extends TimeStamped {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Category category;
 
     @Column(nullable = false)
@@ -30,8 +34,18 @@ public class Board extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    @JoinColumn(name = "member", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
+
+    public void update(BoardRequestDto boardRequestDto) {
+        this.title = boardRequestDto.getTitle();
+        this.image = boardRequestDto.getImage();
+        this.content = boardRequestDto.getContent();
+        this.category = boardRequestDto.getCatagory();
+    }
 }
