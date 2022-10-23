@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +71,6 @@ public class BoardService {
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
         return optionalBoard.orElse(null);
     }
-
 
     @Transactional
     public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto, Member member) {

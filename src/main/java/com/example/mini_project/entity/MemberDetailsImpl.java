@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class UserDetailsImpl implements UserDetails {
+public class MemberDetailsImpl implements UserDetails {
 
     private Member member;
     public Member getMember(){

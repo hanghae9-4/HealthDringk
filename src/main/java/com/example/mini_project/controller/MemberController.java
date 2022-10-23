@@ -2,16 +2,14 @@ package com.example.mini_project.controller;
 
 import com.example.mini_project.dto.requestDto.*;
 import com.example.mini_project.dto.responseDto.ResponseDto;
-import com.example.mini_project.entity.UserDetailsImpl;
+import com.example.mini_project.entity.MemberDetailsImpl;
 import com.example.mini_project.security.jwt.JwtUtil;
 import com.example.mini_project.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/member")
@@ -27,8 +25,8 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseDto<?> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
-        return memberService.login(loginRequestDto, httpServletResponse);
+    public ResponseDto<?> login(@RequestBody MemberRequestDto memberRequestDto, HttpServletResponse httpServletResponse) {
+        return memberService.login(memberRequestDto, httpServletResponse);
     }
 
 //    @PostMapping("/logout")
@@ -42,25 +40,25 @@ public class MemberController {
     }
 
     @GetMapping("/renew")
-    public ResponseDto<?> issuedToken(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse httpServletResponse) {
+    public ResponseDto<?> issuedToken(@AuthenticationPrincipal MemberDetailsImpl userDetails, HttpServletResponse httpServletResponse) {
         httpServletResponse.addHeader(JwtUtil.ACCESS_TOKEN, jwtUtil.createToken(userDetails.getMember().getName(),"Access"));
         return ResponseDto.success("토큰 갱신 완료");
     }
 
     @GetMapping ("/mypage")
-    public ResponseDto<?> mypage(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return memberService.getMypage(userDetailsImpl);
+    public ResponseDto<?> mypage(@AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+        return memberService.getMypage(memberDetailsImpl);
     }
 
-//    @PutMapping ("/mypage/image")
-//    public ResponseDto<?> changeImage(@RequestBody ChangeImageRequestDto changeImageRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-//        return memberService.changeImage(changeImageRequestDto, userDetailsImpl);
-//    }
-//
-//    @PutMapping ("/mypage/password")
-//    public ResponseDto<?> changePassword(@RequestBody ChangePasswordRequestDto changePasswordRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-//        return memberService.changePassword(changePasswordRequestDto, userDetailsImpl);
-//    }
+    @PutMapping ("/mypage/image")
+    public ResponseDto<?> changeImage(@RequestBody ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+        return memberService.changeImage(changeMemberInfoRequestDto, memberDetailsImpl);
+    }
+
+    @PutMapping ("/mypage/password")
+    public ResponseDto<?> changePassword(@RequestBody ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+        return memberService.changePassword(changeMemberInfoRequestDto, memberDetailsImpl);
+    }
 
 
 }

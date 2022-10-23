@@ -1,7 +1,7 @@
 package com.example.mini_project.service;
 
 import com.example.mini_project.entity.Member;
-import com.example.mini_project.entity.UserDetailsImpl;
+import com.example.mini_project.entity.MemberDetailsImpl;
 import com.example.mini_project.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class MemberDetailsServiceImpl implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -22,8 +22,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 () -> new RuntimeException("Not Found Member")
         );
 
-        UserDetailsImpl userDetails = new UserDetailsImpl();
-        userDetails.setMember(member);
-        return userDetails;
+        MemberDetailsImpl memberDetails = new MemberDetailsImpl();
+        memberDetails.setMember(member);
+        return memberDetails;
     }
 }

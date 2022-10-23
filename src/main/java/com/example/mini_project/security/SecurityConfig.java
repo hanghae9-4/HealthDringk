@@ -31,6 +31,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer ignoringCustomizer(){
         return (web -> web.ignoring()
                 .antMatchers(HttpMethod.POST, "/member/**")
+                .antMatchers(HttpMethod.GET, "/board/**")
                 .antMatchers("/h2-console/**"));
     }
 

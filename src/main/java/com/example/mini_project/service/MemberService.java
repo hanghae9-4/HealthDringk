@@ -7,7 +7,7 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Member;
 import com.example.mini_project.entity.RefreshToken;
-import com.example.mini_project.entity.UserDetailsImpl;
+import com.example.mini_project.entity.MemberDetailsImpl;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.MemberRepository;
 import com.example.mini_project.repository.RefreshTokenRepository;
@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,24 +49,24 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> login(LoginRequestDto loginRequestDto, HttpServletResponse httpServletResponse) {
+    public ResponseDto<?> login(MemberRequestDto memberRequestDto, HttpServletResponse httpServletResponse) {
 
-        Member member = memberRepository.findByName(loginRequestDto.getName()).orElseThrow(
+        Member member = memberRepository.findByName(memberRequestDto.getName()).orElseThrow(
                 () -> new RuntimeException("Not found account")
         );
 
-        if(!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())){
+        if(!passwordEncoder.matches(memberRequestDto.getPassword(), member.getPassword())){
             return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
         }
 
-        TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getName());
+        TokenDto tokenDto = jwtUtil.createAllToken(memberRequestDto.getName());
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByName(loginRequestDto.getName());
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByName(memberRequestDto.getName());
 
         if (refreshToken.isPresent()){
             refreshTokenRepository.save(refreshToken.get().update(tokenDto.getRefreshToken()));
         }else {
-            RefreshToken renewRefreshToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getName());
+            RefreshToken renewRefreshToken = new RefreshToken(tokenDto.getRefreshToken(), memberRequestDto.getName());
             refreshTokenRepository.save(renewRefreshToken);
         }
 
@@ -96,9 +95,9 @@ public class MemberService {
         }else return ResponseDto.success("사용가능한 ID 입니다.");
     }
 
-    public ResponseDto<?> getMypage(UserDetailsImpl userDetailsImpl) {
+    public ResponseDto<?> getMypage(MemberDetailsImpl memberDetailsImpl) {
 
-        Member member = isPresentMember(userDetailsImpl);
+        Member member = isPresentMember(memberDetailsImpl);
         if (null == member){
             return ResponseDto.fail("NOT_FOUND","존재하지 않는 회원입니다.");
         }
@@ -124,38 +123,38 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Member isPresentMember(UserDetailsImpl userDetailsImpl){
-        Optional<Member> member = memberRepository.findById(userDetailsImpl.getMember().getId());
+    public Member isPresentMember(MemberDetailsImpl memberDetailsImpl){
+        Optional<Member> member = memberRepository.findById(memberDetailsImpl.getMember().getId());
         return member.orElse(null);
     }
 
-//    @Transactional
-//    public ResponseDto<?> changeImage(ChangeImageRequestDto changeImageRequestDto, UserDetailsImpl userDetailsImpl) {
-//
-//
-//
-//    }
-//
+    @Transactional
+    public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
 
-//    @Transactional
-//    public ResponseDto<?> changePassword(ChangePasswordRequestDto changePasswordRequestDto, UserDetailsImpl userDetailsImpl) {
-//
-//        Member member = memberRepository.findByName(userDetailsImpl.getMember().getName()).orElseThrow(
-//                () -> new RuntimeException("Not found account")
-//        );
-//
-//        if(!passwordEncoder.matches(changePasswordRequestDto.getCurrentPassword(), member.getPassword())){
-//            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
-//        }
-//
-//        if(!changePasswordRequestDto.getCurrentPassword().equals(changePasswordRequestDto.getModifiedPassword())){
-//            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
-//        }
-//
-//        member = Member.builder()
-//                .password(passwordEncoder.encode(changePasswordRequestDto.getModifiedPassword()))
-//                .build();
-//
-//        return ResponseDto.success("비밀번호 변경 성공");
-//    }
+        Member member = memberRepository.findByName(memberDetailsImpl.getMember().getName()).orElseThrow(
+                () -> new RuntimeException("Not found account")
+        );
+
+        member.updateInfo(changeMemberInfoRequestDto);
+        return ResponseDto.success("이미지 변경 성공");
+    }
+
+    @Transactional
+    public ResponseDto<?> changePassword(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
+
+        Member member = memberRepository.findByName(memberDetailsImpl.getMember().getName()).orElseThrow(
+                () -> new RuntimeException("Not found account")
+        );
+
+        if(!passwordEncoder.matches(changeMemberInfoRequestDto.getCurrentPassword(), member.getPassword())){
+            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
+        }
+
+        if(!changeMemberInfoRequestDto.getCurrentPassword().equals(changeMemberInfoRequestDto.getModifiedPassword())){
+            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
+        }
+
+        member.updateInfo(changeMemberInfoRequestDto);
+        return ResponseDto.success("비밀번호 변경 성공");
+    }
 }
