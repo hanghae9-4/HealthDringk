@@ -86,11 +86,9 @@ public class MyPageService {
             return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
         }
 
-        if(!changeMemberInfoRequestDto.getCurrentPassword().equals(changeMemberInfoRequestDto.getModifiedPassword())){
-            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
-        }
-
+        changeMemberInfoRequestDto.setModifiedPassword(passwordEncoder.encode(changeMemberInfoRequestDto.getModifiedPassword()));
         member.updateInfo(changeMemberInfoRequestDto);
+
         return ResponseDto.success("비밀번호 변경 성공");
     }
 

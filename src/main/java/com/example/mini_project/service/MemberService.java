@@ -1,6 +1,7 @@
 package com.example.mini_project.service;
 
 import com.example.mini_project.dto.TokenDto;
+import com.example.mini_project.dto.requestDto.CheckIdRequestDto;
 import com.example.mini_project.dto.requestDto.MemberRequestDto;
 import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Authority;
@@ -11,6 +12,7 @@ import com.example.mini_project.repository.RefreshTokenRepository;
 import com.example.mini_project.security.JwtFilter;
 import com.example.mini_project.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final MemberRepository memberRepository;
@@ -51,6 +54,7 @@ public class MemberService {
 
         return ResponseDto.success("회원가입 성공");
     }
+
     @Transactional
     public ResponseDto<?> login(MemberRequestDto memberRequestDto, HttpServletResponse response) {
 
@@ -103,6 +107,13 @@ public class MemberService {
         response.setHeader("Refresh-Token", tokenDto.getRefreshToken());
 
         return ResponseDto.success("유저 갱신 성공");
+    }
+
+    public ResponseDto<?> checkId(CheckIdRequestDto checkIdRequestDto) {
+        if (memberRepository.existsByName(checkIdRequestDto.getName())){
+            throw new DuplicateKeyException("존재하는 ID 입니다.");
+        }else return ResponseDto.success("사용가능한 ID 입니다.");
+
     }
 
 }

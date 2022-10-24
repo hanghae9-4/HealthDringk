@@ -1,5 +1,6 @@
 package com.example.mini_project.controller;
 
+import com.example.mini_project.dto.requestDto.CheckIdRequestDto;
 import com.example.mini_project.dto.requestDto.MemberRequestDto;
 import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.service.MemberService;
@@ -33,6 +34,11 @@ public class MemberController {
     @PostMapping("/reissue")
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         return memberService.reissue(request, response);
+    }
+
+    @PostMapping("/check-id")
+    public ResponseDto<?> checkId(@RequestBody CheckIdRequestDto checkIdRequestDto) {
+        return memberService.checkId(checkIdRequestDto);
     }
 
 }

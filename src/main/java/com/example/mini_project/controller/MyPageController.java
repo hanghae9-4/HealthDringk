@@ -15,7 +15,7 @@ public class MyPageController {
 
     private final MyPageService myPageService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseDto<?> mypage(@AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
         return myPageService.getMypage(memberDetailsImpl);
     }
