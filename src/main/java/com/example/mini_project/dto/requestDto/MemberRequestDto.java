@@ -1,14 +1,13 @@
 package com.example.mini_project.dto.requestDto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class MemberRequestDto {
 
@@ -16,7 +15,10 @@ public class MemberRequestDto {
     private String name;
 
     @NotBlank
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    public UsernamePasswordAuthenticationToken toAuthentication() {
+        return new UsernamePasswordAuthenticationToken(name, password);
+    }
 
 }

@@ -10,6 +10,7 @@ import com.example.mini_project.entity.Comment;
 import com.example.mini_project.entity.Member;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.CommentRepository;
+import com.example.mini_project.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+
+    private final HeartRepository heartRepository;
 
     private final CommentRepository commentRepository;
 
@@ -61,6 +64,7 @@ public class BoardService {
                         .writer(board.getMember().getName())  // 게시물 작성자
                         .content(board.getContent())
                         .createdAt(board.getCreatedAt())
+                        .heartNum(heartRepository.countByBoard(board))
                         .commentResponseDtoList(commentResponseDtoList)
                         .build()
         );
@@ -80,7 +84,7 @@ public class BoardService {
                 .image(boardRequestDto.getImage())
                 .member(member)
                 .content(boardRequestDto.getContent())
-                .category(boardRequestDto.getCatagory())
+                .category(boardRequestDto.getCategory())
                 .build();
 
         boardRepository.save(board);

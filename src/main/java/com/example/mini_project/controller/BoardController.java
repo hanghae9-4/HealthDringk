@@ -2,7 +2,7 @@ package com.example.mini_project.controller;
 
 import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.dto.responseDto.ResponseDto;
-import com.example.mini_project.entity.MemberDetailsImpl;
+import com.example.mini_project.service.MemberDetailsImpl;
 import com.example.mini_project.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

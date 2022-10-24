@@ -4,7 +4,6 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Heart;
 import com.example.mini_project.entity.Member;
-import com.example.mini_project.entity.MemberDetailsImpl;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor

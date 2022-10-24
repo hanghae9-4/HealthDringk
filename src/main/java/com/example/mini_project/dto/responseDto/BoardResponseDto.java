@@ -19,7 +19,7 @@ public class BoardResponseDto {
     private String content;
     private String writer;
     private String name;
-    private int heartNum;
+    private long heartNum;
     private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
 

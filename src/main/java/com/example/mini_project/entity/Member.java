@@ -21,7 +21,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @JsonIgnore
@@ -30,6 +30,10 @@ public class Member {
 
     @Column
     private String image;
+
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
+    private Authority authority;
 
     public void updateInfo(ChangeMemberInfoRequestDto changeMemberInfoRequestDto){
         this.name = this.getName();

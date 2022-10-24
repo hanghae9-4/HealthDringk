@@ -1,6 +1,5 @@
 package com.example.mini_project.entity;
 
-
 import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.util.TimeStamped;
 import lombok.AllArgsConstructor;
@@ -22,6 +21,7 @@ public class Board extends TimeStamped {
     private Long id;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(nullable = false)
@@ -45,6 +45,6 @@ public class Board extends TimeStamped {
         this.title = boardRequestDto.getTitle();
         this.image = boardRequestDto.getImage();
         this.content = boardRequestDto.getContent();
-        this.category = boardRequestDto.getCatagory();
+        this.category = boardRequestDto.getCategory();
     }
 }
