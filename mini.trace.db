@@ -1,3 +1,0 @@
-2022-10-24 17:38:52 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "alter table refresh_token add column [*]key varchar(255) not null"; expected "identifier"; SQL statement:
-alter table refresh_token add column key varchar(255) not null [42001-214]
