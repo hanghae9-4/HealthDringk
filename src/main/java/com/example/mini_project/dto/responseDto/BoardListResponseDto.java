@@ -19,6 +19,9 @@ public class BoardListResponseDto {
     private String image;
     private String title;
     private String content;
+
+    private Long heartNum;
+
     private String writer;
     private long heartNum;
     private LocalDateTime createdAt;
