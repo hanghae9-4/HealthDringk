@@ -1,7 +1,6 @@
 package com.example.mini_project.dto.responseDto;
 
 import com.example.mini_project.entity.Board;
-import com.example.mini_project.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class BoardResponseDto {
     private String content;
     private String writer;
 
-    private String name;
+    private String name = "null";
 
     private Long heartNum;
 

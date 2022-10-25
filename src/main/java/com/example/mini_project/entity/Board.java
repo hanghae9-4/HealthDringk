@@ -2,9 +2,6 @@ package com.example.mini_project.entity;
 
 import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.util.TimeStamped;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +20,7 @@ public class Board extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;

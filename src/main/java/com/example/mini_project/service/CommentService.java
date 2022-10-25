@@ -5,6 +5,7 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Comment;
 import com.example.mini_project.entity.Member;
+import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,14 @@ public class CommentService {
 
     private final BoardService boardService;
 
+    private final BoardRepository boardRepository;
+
     private final CommentRepository commentRepository;
 
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, Long boardId, Member member) {
 
+//        Board board = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException(""))
 
         Board board = boardService.isPresentBoard(boardId);
         if (board == null) {

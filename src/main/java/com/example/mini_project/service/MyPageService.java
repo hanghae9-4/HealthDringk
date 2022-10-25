@@ -67,7 +67,7 @@ public class MyPageService {
     @Transactional
     public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
 
-        Member member = memberRepository.findByName(memberDetailsImpl.getMember().getName()).orElseThrow(
+        Member member = memberRepository.findByName(memberDetailsImpl.getUsername()).orElseThrow(
                 () -> new RuntimeException("Not found account")
         );
 
@@ -87,7 +87,7 @@ public class MyPageService {
         }
 
         changeMemberInfoRequestDto.setModifiedPassword(passwordEncoder.encode(changeMemberInfoRequestDto.getModifiedPassword()));
-        member.updateInfo(changeMemberInfoRequestDto);
+//        member.updateInfo(changeMemberInfoRequestDto);
 
         return ResponseDto.success("비밀번호 변경 성공");
     }

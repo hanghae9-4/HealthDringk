@@ -24,11 +24,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-
     // localDateTime Timestameed 역직렬화 문제를 해결해준다.
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
-
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'org.json:json:20220924'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'

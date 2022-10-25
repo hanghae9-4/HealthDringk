@@ -2,7 +2,6 @@ package com.example.mini_project.dto.requestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.validation.constraints.NotBlank;
@@ -22,3 +21,11 @@ public class MemberRequestDto {
     }
 
 }
+
+
+
+
+
+
+
+

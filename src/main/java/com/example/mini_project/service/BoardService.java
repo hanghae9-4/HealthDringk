@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,8 @@ public class BoardService {
 
     private final HeartRepository heartRepository;
     private final CommentRepository commentRepository;
+
+    private final S3UploadService s3UploadService;
 
 //    public ResponseDto<?> getAllPost() {
 //        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
@@ -124,7 +127,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public ResponseDto<?> getPost(Long boardId, Member member) {
+    public ResponseDto<?> getPost(Long boardId, MemberDetailsImpl memberDetails) { // memberDetails == null ->
         Board board = isPresentBoard(boardId);
         if (board == null) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 ID입니다.");
@@ -145,19 +148,23 @@ public class BoardService {
             );
         }
 
-        return ResponseDto.success(
-                BoardResponseDto.builder()
-                        .name(member.getName())    // 로그인 한 사람
-                        .title(board.getTitle())
-                        .image(board.getImage())
-                        .writer(board.getMember().getName())  // 게시물 작성자
-                        .content(board.getContent())
-                        .createdAt(board.getCreatedAt())
-                        .heartNum(heartRepository.countByBoard(board))
-                        .heartOrNot(heartRepository.existsByMemberAndBoard(member, board))
-                        .commentResponseDtoList(commentResponseDtoList)
-                        .build()
-        );
+        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
+                .title(board.getTitle())
+                .image(board.getImage())
+                .writer(board.getMember().getName())  // 게시물 작성자
+                .content(board.getContent())
+                .createdAt(board.getCreatedAt())
+                .heartNum(heartRepository.countByBoard(board))
+//                        .heartOrNot(heartRepository.existsByMemberAndBoard(member, board)) 프론트랑 협의
+                .commentResponseDtoList(commentResponseDtoList)
+                .build();
+
+        if (memberDetails != null)
+            boardResponseDto.builder()
+                    .name(memberDetails.getUsername())
+                    .build();
+
+        return ResponseDto.success(boardResponseDto);
     }
 
     public Board isPresentBoard(Long boardId) {
@@ -168,11 +175,11 @@ public class BoardService {
 
 
     @Transactional
-    public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto, Member member) {
+    public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto, Member member) throws IOException {
 
         Board board = Board.builder()
                 .title(boardRequestDto.getTitle())
-                .image(boardRequestDto.getImage())
+                .image(s3UploadService.upload(boardRequestDto.getImage(), "/board"))
                 .member(member)
                 .content(boardRequestDto.getContent())
                 .category(boardRequestDto.getCategory())

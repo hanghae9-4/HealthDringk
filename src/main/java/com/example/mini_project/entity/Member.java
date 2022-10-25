@@ -38,7 +38,7 @@ public class Member {
     public void updateInfo(ChangeMemberInfoRequestDto changeMemberInfoRequestDto){
         this.name = this.getName();
         this.password = changeMemberInfoRequestDto.getModifiedPassword() != null ? changeMemberInfoRequestDto.getModifiedPassword() : this.getPassword();
-        this.image = changeMemberInfoRequestDto.getImage() != null ? changeMemberInfoRequestDto.getImage() : this.getImage();
+//        this.image = changeMemberInfoRequestDto.getImage() != null ? changeMemberInfoRequestDto.getImage(). : this.getImage();
     }
 
 }
