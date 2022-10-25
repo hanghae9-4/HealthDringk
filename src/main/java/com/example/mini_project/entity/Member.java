@@ -3,6 +3,8 @@ package com.example.mini_project.entity;
 
 import com.example.mini_project.dto.requestDto.ChangeImageRequestDto;
 import com.example.mini_project.dto.requestDto.ChangePasswordRequestDto;
+import com.example.mini_project.util.TimeStamped;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +18,10 @@ import java.util.Objects;
 @Getter
 @Entity
 @Builder
+
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

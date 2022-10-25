@@ -7,13 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class BoardRequestDto {
 
     private String title;
     private String image;
     private String content;
-    private Category catagory;
+    private Category category;
 
 }

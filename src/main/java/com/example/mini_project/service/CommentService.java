@@ -16,9 +16,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private BoardService boardService;
+    private final BoardService boardService;
 
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, Long boardId, Member member) {

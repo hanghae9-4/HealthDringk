@@ -1,5 +1,6 @@
 package com.example.mini_project.dto.responseDto;
 
+import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +20,22 @@ public class BoardResponseDto {
     private String image;
     private String content;
     private String writer;
+
     private String name;
-    private int heartNum;
+
+    private Long heartNum;
+
+    private boolean heartOrNot;
+
     private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
+
+    public BoardResponseDto (Board board){
+        this.title = board.getTitle();
+        this.content = board.getContent();
+        this.image = board.getImage();
+        this.writer = board.getMember().getName();
+        this.createdAt = board.getCreatedAt();
+    }
 
 }
