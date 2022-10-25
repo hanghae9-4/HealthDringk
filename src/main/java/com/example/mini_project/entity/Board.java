@@ -44,7 +44,7 @@ public class Board extends TimeStamped {
 
     public void update(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
-        this.image = boardRequestDto.getImage();
+//        this.image = boardRequestDto.getImage();
         this.content = boardRequestDto.getContent();
         this.category = boardRequestDto.getCategory();
     }
