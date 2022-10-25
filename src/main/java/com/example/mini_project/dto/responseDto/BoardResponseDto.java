@@ -1,6 +1,5 @@
 package com.example.mini_project.dto.responseDto;
 
-import com.example.mini_project.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,7 @@ public class BoardResponseDto {
     private String content;
     private String writer;
     private String name;
-    private int heartNum;
+    private long heartNum;
     private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
 

@@ -2,16 +2,17 @@ package com.example.mini_project.dto.requestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class ChangeImageRequestDto {
+public class ChangeMemberInfoRequestDto {
 
-    @NotBlank
     private String image;
+
+    private String currentPassword;
+
+    private String modifiedPassword;
 
 }

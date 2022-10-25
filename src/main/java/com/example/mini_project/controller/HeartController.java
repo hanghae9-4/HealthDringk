@@ -1,7 +1,7 @@
 package com.example.mini_project.controller;
 
 import com.example.mini_project.dto.responseDto.ResponseDto;
-import com.example.mini_project.entity.UserDetailsImpl;
+import com.example.mini_project.service.MemberDetailsImpl;
 import com.example.mini_project.service.HeartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +18,7 @@ public class HeartController {
     private final HeartService heartService;
 
     @PostMapping("/{boardId}")
-    public ResponseDto<?> heart(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl){
-        return heartService.heart(boardId, userDetailsImpl);
+    public ResponseDto<?> heart(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+        return heartService.heart(boardId, memberDetailsImpl);
     }
 }
