@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -44,4 +43,5 @@ public class Comment extends TimeStamped {
         this.content = commentRequestDto.getComment();
 
     }
+
 }

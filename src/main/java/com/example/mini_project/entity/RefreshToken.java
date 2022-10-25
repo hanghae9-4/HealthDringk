@@ -1,13 +1,10 @@
 package com.example.mini_project.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -15,22 +12,20 @@ import javax.validation.constraints.NotBlank;
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "rt_key")
+    private String key;
 
-    @NotBlank
-    private String refreshToken;
+    @Column(name = "rt_value")
+    private String value;
 
-    @NotBlank
-    private String name;
-
-    public RefreshToken(String token, String name){
-        this.refreshToken = token;
-        this.name = name;
+    @Builder
+    public RefreshToken(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public RefreshToken update(String token){
-        this.refreshToken = token;
+    public RefreshToken updateValue(String token) {
+        this.value = token;
         return this;
     }
 

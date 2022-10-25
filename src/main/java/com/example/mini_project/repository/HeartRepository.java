@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
 
+    long countByBoard(Board board);
     Optional<Heart> findHeartByMemberAndBoardId(Member member, Long boardId);
     void deleteHeartByMemberAndBoard(Member member, Board board);
 

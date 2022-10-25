@@ -1,6 +1,5 @@
 package com.example.mini_project.entity;
 
-
 import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.util.TimeStamped;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -12,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -27,6 +25,7 @@ public class Board extends TimeStamped {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(nullable = false)
