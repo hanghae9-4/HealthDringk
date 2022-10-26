@@ -77,6 +77,7 @@ public class BoardService {
         Pageable pageable = PageRequest.of(1, 5, sort1);
 
         Page<Board> boardList = boardRepository.findAll(pageable);
+        System.out.println("boardList = " + boardList);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
 
         for (Board board : boardList) {
@@ -89,6 +90,7 @@ public class BoardService {
                             .heartNum(heartRepository.countByBoard(board))
                             .createdAt(board.getCreatedAt())
                             .build();
+            System.out.println("boardListResponseDto = " + boardListResponseDto);
             boardListResponseDtoList.add(boardListResponseDto);
         }
 
