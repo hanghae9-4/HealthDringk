@@ -74,7 +74,7 @@ public class BoardService {
 
         Sort sort1 = Sort.by("createdAt").descending();
 
-        Pageable pageable = PageRequest.of(1, 5, sort1);
+        Pageable pageable = PageRequest.of(0, 5, sort1);
 
         Page<Board> boardList = boardRepository.findAll(pageable);
         System.out.println("boardList = " + boardList);
@@ -101,7 +101,7 @@ public class BoardService {
 
         Sort sort = Sort.by("createdAt").descending();
 
-        Pageable pageable = PageRequest.of(1, 5, sort);
+        Pageable pageable = PageRequest.of(0, 5, sort);
 
         Page<Board> boardList = boardRepository.findAllByCategory(category, pageable);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
@@ -181,7 +181,7 @@ public class BoardService {
 
         Board board = Board.builder()
                 .title(boardRequestDto.getTitle())
-                .image(s3UploadService.upload(boardRequestDto.getImage(), "/board"))
+                .image(s3UploadService.upload(boardRequestDto.getImage(), "board"))
                 .member(member)
                 .content(boardRequestDto.getContent())
                 .category(boardRequestDto.getCategory())

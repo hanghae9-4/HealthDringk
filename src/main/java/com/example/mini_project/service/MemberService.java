@@ -78,14 +78,14 @@ public class MemberService {
         refreshTokenRepository.save(refreshToken);
 
         response.setHeader(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());
-        response.setHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.setHeader("RefreshToken", tokenDto.getRefreshToken());
 
         return ResponseDto.success("로그인 완료");
     }
 
     @Transactional
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             throw new RuntimeException("인증이 유효하지 않습니다.");
         }
 
@@ -96,7 +96,7 @@ public class MemberService {
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
 
-        if (!refreshToken.getValue().equals(request.getHeader("Refresh-Token"))) {
+        if (!refreshToken.getValue().equals(request.getHeader("RefreshToken"))) {
             throw new RuntimeException("유저 정보가 일치하지 않습니다.");
         }
 
@@ -104,7 +104,7 @@ public class MemberService {
         refreshToken.updateValue(tokenDto.getRefreshToken());
 
         response.setHeader(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());
-        response.setHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.setHeader("RefreshToken", tokenDto.getRefreshToken());
 
         return ResponseDto.success("유저 갱신 성공");
     }
