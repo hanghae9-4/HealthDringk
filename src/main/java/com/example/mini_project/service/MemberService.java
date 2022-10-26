@@ -51,6 +51,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(memberRequestDto.getPassword()))
                 .image("https://zero-to-one-bucket.s3.ap-northeast-2.amazonaws.com/%2F%2Fmember/b5c53562-4ae5-48c3-8fb8-369aac46d4deprofile_placeholder.png")
                 .authority(Authority.ROLE_USER)
+                .image("https://zero-to-one-bucket.s3.ap-northeast-2.amazonaws.com/%2F%2Fmember/b5c53562-4ae5-48c3-8fb8-369aac46d4deprofile_placeholder.png")
                 .build();
 
         memberRepository.save(member);
@@ -82,14 +83,15 @@ public class MemberService {
         refreshTokenRepository.save(refreshToken);
 
         response.setHeader(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());
-        response.setHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.setHeader("RefreshToken", tokenDto.getRefreshToken());
 
         return ResponseDto.success("로그인 완료");
     }
 
     @Transactional
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+    
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             throw new NotValidMemberException();
         }
 
@@ -101,15 +103,17 @@ public class MemberService {
                 NotValidMemberException::new
         );
 
-        if (!refreshToken.getValue().equals(request.getHeader("Refresh-Token"))) {
+
+        if (!refreshToken.getValue().equals(request.getHeader("RefreshToken"))) {
             throw new NotValidMemberException();
+
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
         refreshToken.updateValue(tokenDto.getRefreshToken());
 
         response.setHeader(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.BEARER_PREFIX + tokenDto.getAccessToken());
-        response.setHeader("Refresh-Token", tokenDto.getRefreshToken());
+        response.setHeader("RefreshToken", tokenDto.getRefreshToken());
 
         return ResponseDto.success("유저 갱신 성공");
     }

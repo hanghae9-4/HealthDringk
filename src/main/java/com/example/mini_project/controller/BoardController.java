@@ -19,24 +19,24 @@ public class BoardController {
     private final BoardService boardService;
 
     // 전체 게시물 조회
-    @GetMapping("/board/recent")
+    @GetMapping("/boards/recent")
     public ResponseDto<?> getAllRecentPost() {
 
         return boardService.getAllRecentPost();
     }
 
-    @GetMapping("/board/recent-category")
-    public ResponseDto<?> getAllRecentCategory(@RequestParam(value = "category", required = true) Category category){
+    @GetMapping("/boards/recent-categories")
+    public ResponseDto<?> getAllRecentCategory(@RequestParam(value = "category") Category category){
         return boardService.getAllRecentCategory(category);
     }
 
-    @GetMapping("/board/category")
-    public ResponseDto<?> getAllPostByCategory(@RequestParam(value = "category", required = true) Category category){
+    @GetMapping("/boards/categories")
+    public ResponseDto<?> getAllPostByCategory(@RequestParam(value = "category") Category category){
         return boardService.getAllPostByCategory(category);
     }
 
     // 게시글 상세 조회
-    @GetMapping("/board/{boardId}")
+    @GetMapping("/boards/{boardId}")
     public ResponseDto<?> getPost(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         return boardService.getPost(boardId, memberDetails);
     }
@@ -44,20 +44,21 @@ public class BoardController {
     // 카텔고리별 데이터 불러오기
 
     // 게시물 등록
-    @PostMapping("/board")
-    public ResponseDto<?> createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException {
+    @PostMapping("/boards")
+    public ResponseDto<?> createBoard(@ModelAttribute BoardRequestDto boardRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException {
         return boardService.createBoard(boardRequestDto, memberDetails.getMember());
     }
 
-    @PutMapping("/board/{boardId}")
+    @PutMapping("/boards/{boardId}")
     public ResponseDto<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto,
                                       @AuthenticationPrincipal MemberDetailsImpl memberDetails){
         return boardService.updateBoard(boardId, boardRequestDto, memberDetails.getMember());
     }
 
-    @DeleteMapping("/board/{boardId}")
+    @DeleteMapping("/boards/{boardId}")
     public ResponseDto<?> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal MemberDetailsImpl memberDetails){
         return boardService.deletePost(boardId, memberDetails.getMember());
     }
 
 }
+

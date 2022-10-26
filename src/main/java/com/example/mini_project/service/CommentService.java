@@ -35,7 +35,7 @@ public class CommentService {
         }
 
         Comment comment = Comment.builder()
-                .content(commentRequestDto.getComment())
+                .content(commentRequestDto.getContent())
                 .board(board)
                 .member(member)
                 .build();

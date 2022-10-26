@@ -40,7 +40,7 @@ public class BoardService {
 
         Sort sort1 = Sort.by("createdAt").descending();
 
-        Pageable pageable = PageRequest.of(1, 5, sort1);
+        Pageable pageable = PageRequest.of(0, 5, sort1);
 
         Page<Board> boardList = boardRepository.findAll(pageable);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
@@ -55,6 +55,7 @@ public class BoardService {
                             .heartNum(heartRepository.countByBoard(board))
                             .createdAt(board.getCreatedAt())
                             .build();
+            System.out.println("boardListResponseDto = " + boardListResponseDto);
             boardListResponseDtoList.add(boardListResponseDto);
         }
 
@@ -65,7 +66,7 @@ public class BoardService {
 
         Sort sort = Sort.by("createdAt").descending();
 
-        Pageable pageable = PageRequest.of(1, 5, sort);
+        Pageable pageable = PageRequest.of(0, 5, sort);
 
         Page<Board> boardList = boardRepository.findAllByCategory(category, pageable);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
@@ -125,10 +126,9 @@ public class BoardService {
                 .commentResponseDtoList(commentResponseDtoList)
                 .build();
 
-        if (memberDetails != null)
-            boardResponseDto.builder()
-                    .name(memberDetails.getUsername())
-                    .build();
+        if (memberDetails != null) {
+            boardResponseDto.updateMemberName(memberDetails.getMember());
+        }
 
         return ResponseDto.success(boardResponseDto);
     }
@@ -144,7 +144,7 @@ public class BoardService {
 
         Board board = Board.builder()
                 .title(boardRequestDto.getTitle())
-                .image(s3UploadService.upload(boardRequestDto.getImage(), "/board"))
+                .image(s3UploadService.upload(boardRequestDto.getImage(), "board"))
                 .member(member)
                 .content(boardRequestDto.getContent())
                 .category(boardRequestDto.getCategory())

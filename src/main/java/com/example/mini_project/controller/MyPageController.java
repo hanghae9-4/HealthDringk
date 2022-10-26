@@ -23,12 +23,13 @@ public class MyPageController {
         return myPageService.getMypage(memberDetailsImpl);
     }
 
-    @PutMapping( "/image")
+
+    @PutMapping( "/images")
     public ResponseDto<?> changeImage(@ModelAttribute ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl) throws IOException {
         return myPageService.changeImage(changeMemberInfoRequestDto, memberDetailsImpl);
     }
 
-    @PutMapping("/password")
+    @PutMapping("/passwords")
     public ResponseDto<?> changePassword(@RequestBody @Valid ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
         return myPageService.changePassword(changeMemberInfoRequestDto, memberDetailsImpl);
     }
