@@ -48,6 +48,7 @@ public class MemberService {
                 .name(memberRequestDto.getName())
                 .password(passwordEncoder.encode(memberRequestDto.getPassword()))
                 .authority(Authority.ROLE_USER)
+                .image("https://zero-to-one-bucket.s3.ap-northeast-2.amazonaws.com/%2F%2Fmember/b5c53562-4ae5-48c3-8fb8-369aac46d4deprofile_placeholder.png")
                 .build();
 
         memberRepository.save(member);

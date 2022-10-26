@@ -1,6 +1,7 @@
 package com.example.mini_project.dto.responseDto;
 
 import com.example.mini_project.entity.Board;
+import com.example.mini_project.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,11 @@ public class BoardResponseDto {
         this.image = board.getImage();
         this.writer = board.getMember().getName();
         this.createdAt = board.getCreatedAt();
+    }
+
+    public void updateMemberName(Member member) {
+        this.name = member.getName();
+
     }
 
 }

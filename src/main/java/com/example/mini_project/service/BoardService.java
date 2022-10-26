@@ -77,7 +77,6 @@ public class BoardService {
         Pageable pageable = PageRequest.of(0, 5, sort1);
 
         Page<Board> boardList = boardRepository.findAll(pageable);
-        System.out.println("boardList = " + boardList);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
 
         for (Board board : boardList) {
@@ -161,10 +160,9 @@ public class BoardService {
                 .commentResponseDtoList(commentResponseDtoList)
                 .build();
 
-        if (memberDetails != null)
-            boardResponseDto.builder()
-                    .name(memberDetails.getUsername())
-                    .build();
+        if (memberDetails != null) {
+            boardResponseDto.updateMemberName(memberDetails.getMember());
+        }
 
         return ResponseDto.success(boardResponseDto);
     }
