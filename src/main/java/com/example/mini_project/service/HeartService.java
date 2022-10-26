@@ -4,6 +4,7 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Heart;
 import com.example.mini_project.entity.Member;
+import com.example.mini_project.exception.customExceptions.NotFoundBoardException;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.HeartRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +23,14 @@ public class HeartService {
     @Transactional
     public ResponseDto<?> heart(Long boardId, MemberDetailsImpl memberDetailsImpl) {
 
-        //게시물이 있는지 없는지
         Board board = isPresentBoard(boardId);
         if(null == board){
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시물 입니다.");
+            throw new NotFoundBoardException();
         }
 
-        //자신이 좋아요를 했는지 안했는지
         Member member = memberDetailsImpl.getMember();
         Optional<Heart> heart = heartRepository.findHeartByMemberAndBoardId(member, boardId);
-        //안했으면 Heart 생성
+
         if(heart.isEmpty()) {
             Heart newHeart = Heart.builder()
                     .member(member)

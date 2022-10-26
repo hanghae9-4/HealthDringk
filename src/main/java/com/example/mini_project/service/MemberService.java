@@ -7,16 +7,18 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Authority;
 import com.example.mini_project.entity.Member;
 import com.example.mini_project.entity.RefreshToken;
+import com.example.mini_project.exception.customExceptions.DuplicatedNameException;
+import com.example.mini_project.exception.customExceptions.NotFoundMemberException;
+import com.example.mini_project.exception.customExceptions.NotMatchedPasswordException;
+import com.example.mini_project.exception.customExceptions.NotValidMemberException;
 import com.example.mini_project.repository.MemberRepository;
 import com.example.mini_project.repository.RefreshTokenRepository;
 import com.example.mini_project.security.JwtFilter;
 import com.example.mini_project.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +44,12 @@ public class MemberService {
     public ResponseDto<?> signup(MemberRequestDto memberRequestDto) {
 
         if (memberRepository.existsByName(memberRequestDto.getName()))
-            throw new RuntimeException("중복된 닉네임입니다.");
+            throw new DuplicatedNameException();
 
         Member member = Member.builder()
                 .name(memberRequestDto.getName())
                 .password(passwordEncoder.encode(memberRequestDto.getPassword()))
+                .image("https://zero-to-one-bucket.s3.ap-northeast-2.amazonaws.com/%2F%2Fmember/b5c53562-4ae5-48c3-8fb8-369aac46d4deprofile_placeholder.png")
                 .authority(Authority.ROLE_USER)
                 .image("https://zero-to-one-bucket.s3.ap-northeast-2.amazonaws.com/%2F%2Fmember/b5c53562-4ae5-48c3-8fb8-369aac46d4deprofile_placeholder.png")
                 .build();
@@ -63,11 +66,12 @@ public class MemberService {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        Member member = memberRepository.findByName(authentication.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
+        Member member = memberRepository.findByName(authentication.getName()).orElseThrow(
+                NotFoundMemberException::new
+        );
 
         if(!passwordEncoder.matches(memberRequestDto.getPassword(), member.getPassword()))
-            throw new RuntimeException("패스워드가 일치하지 않습니다.");
+            throw new NotMatchedPasswordException();
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
@@ -86,19 +90,23 @@ public class MemberService {
 
     @Transactional
     public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+    
         if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-            throw new RuntimeException("인증이 유효하지 않습니다.");
+            throw new NotValidMemberException();
         }
 
         String bearerToken = request.getHeader("Authorization").substring(7);;
         
         Authentication authentication = tokenProvider.getAuthentication(bearerToken);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃된 사용자입니다."));
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName()).orElseThrow(
+                NotValidMemberException::new
+        );
+
 
         if (!refreshToken.getValue().equals(request.getHeader("RefreshToken"))) {
-            throw new RuntimeException("유저 정보가 일치하지 않습니다.");
+            throw new NotValidMemberException();
+
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
@@ -112,7 +120,7 @@ public class MemberService {
 
     public ResponseDto<?> checkId(CheckIdRequestDto checkIdRequestDto) {
         if (memberRepository.existsByName(checkIdRequestDto.getName())){
-            throw new DuplicateKeyException("존재하는 ID 입니다.");
+            throw new DuplicatedNameException();
         }else return ResponseDto.success("사용가능한 ID 입니다.");
 
     }

@@ -5,6 +5,9 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Comment;
 import com.example.mini_project.entity.Member;
+import com.example.mini_project.exception.customExceptions.NotFoundBoardException;
+import com.example.mini_project.exception.customExceptions.NotFoundCommentException;
+import com.example.mini_project.exception.customExceptions.NotValidWriterException;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +29,9 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, Long boardId, Member member) {
 
-//        Board board = boardRepository.findById(boardId).orElseThrow(() -> new RuntimeException(""))
-
         Board board = boardService.isPresentBoard(boardId);
         if (board == null) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
+            throw new NotFoundBoardException();
         }
 
         Comment comment = Comment.builder()
@@ -49,17 +50,16 @@ public class CommentService {
     public ResponseDto<?> updateComment(Long commentId, CommentRequestDto commentRequestDto, Member member) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new RuntimeException("댓글을 찾을 수 없습니다.")
+                NotFoundCommentException::new
         );
 
         Board board = boardService.isPresentBoard(comment.getBoard().getId());
         if (board == null) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+            throw new NotFoundBoardException();
         }
 
-
         if (comment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+            throw new NotValidWriterException();
         }
 
         comment.update(commentRequestDto);
@@ -75,15 +75,16 @@ public class CommentService {
     public ResponseDto<?> deleteComment(Long commentId, Member member) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new RuntimeException("댓글을 찾을 수 없습니다.")
+                NotFoundCommentException::new
         );
+
         Board board = boardService.isPresentBoard(comment.getBoard().getId());
         if (board == null) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+            throw new NotFoundBoardException();
         }
 
         if (comment.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+            throw new NotValidWriterException();
         }
 
         commentRepository.delete(comment);

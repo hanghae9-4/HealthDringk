@@ -1,6 +1,5 @@
 package com.example.mini_project.service;
 
-
 import com.example.mini_project.dto.requestDto.BoardRequestDto;
 import com.example.mini_project.dto.responseDto.BoardListResponseDto;
 import com.example.mini_project.dto.responseDto.BoardResponseDto;
@@ -10,6 +9,8 @@ import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Category;
 import com.example.mini_project.entity.Comment;
 import com.example.mini_project.entity.Member;
+import com.example.mini_project.exception.customExceptions.NotFoundBoardException;
+import com.example.mini_project.exception.customExceptions.NotValidWriterException;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.CommentRepository;
 import com.example.mini_project.repository.HeartRepository;
@@ -31,45 +32,10 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-
     private final HeartRepository heartRepository;
     private final CommentRepository commentRepository;
-
     private final S3UploadService s3UploadService;
 
-//    public ResponseDto<?> getAllPost() {
-//        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
-//        List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
-//
-//        for (Board board : boardList) {
-//            BoardListResponseDto boardListResponseDto = new BoardListResponseDto(board);
-//            boardListResponseDtoList.add(boardListResponseDto);
-//        }
-//
-//        return ResponseDto.success(
-//                boardListResponseDtoList
-//        );
-//    }
-
-    // 페이지 네이션
-//    public ResponseDto<?> getAllPost(int page, int size, String sortBy, boolean isAcs) {
-//
-//        Sort.Direction sortDirection = isAcs ? Sort.Direction.ASC : Sort.Direction.DESC;
-//
-//        Sort sort = Sort.by(sortDirection, sortBy);
-//
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//
-//        Page<Board> boardList = boardRepository.findAll(pageable);
-//        List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
-//
-//        for(Board board: boardList){
-//            BoardListResponseDto boardListResponseDto = new BoardListResponseDto(board);
-//            boardListResponseDtoList.add(boardListResponseDto);
-//        }
-//
-//        return ResponseDto.success(boardListResponseDtoList);
-//        }
     public ResponseDto<?> getAllRecentPost() {
 
         Sort sort1 = Sort.by("createdAt").descending();
@@ -131,7 +97,7 @@ public class BoardService {
     public ResponseDto<?> getPost(Long boardId, MemberDetailsImpl memberDetails) { // memberDetails == null ->
         Board board = isPresentBoard(boardId);
         if (board == null) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 ID입니다.");
+            throw new NotFoundBoardException();
         }
 
         List<Comment> commentList = commentRepository.findAllByBoardOrderByCreatedAtDesc(board);
@@ -173,7 +139,6 @@ public class BoardService {
         return optionalBoard.orElse(null);
     }
 
-
     @Transactional
     public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto, Member member) throws IOException {
 
@@ -192,11 +157,11 @@ public class BoardService {
     public ResponseDto<?> updateBoard(Long boardId, BoardRequestDto boardRequestDto, Member member) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new RuntimeException("게시물을 찾을 수 없습니다.")
+                NotFoundBoardException::new
         );
 
         if (board.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정 가능합니다.");
+            throw new NotValidWriterException();
         }
 
         board.update(boardRequestDto);
@@ -206,11 +171,11 @@ public class BoardService {
     public ResponseDto<?> deletePost(Long boardId, Member member) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new RuntimeException("게시글을 찾을 수 없습니다")
+                NotFoundBoardException::new
         );
 
         if (board.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제 가능합니다.");
+            throw new NotValidWriterException();
         }
 
         boardRepository.delete(board);

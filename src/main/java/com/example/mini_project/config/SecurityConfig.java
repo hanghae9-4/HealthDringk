@@ -77,7 +77,7 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.POST).authenticated()
                 .antMatchers(HttpMethod.DELETE).authenticated()
                 .antMatchers(HttpMethod.PUT).authenticated()
-                .antMatchers("/mypage/**").authenticated()
+                .antMatchers("/my-page/**").authenticated()
                 .anyRequest()
                 .permitAll()
 
@@ -104,5 +104,6 @@ public class SecurityConfig{
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
 
