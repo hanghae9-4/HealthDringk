@@ -35,10 +35,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    public void updateInfo(ChangeMemberInfoRequestDto changeMemberInfoRequestDto){
-        this.name = this.getName();
+    public void updateImage(String imageUrl){
+        this.image = imageUrl;
+    }
+
+    public void updatePassword(ChangeMemberInfoRequestDto changeMemberInfoRequestDto){
         this.password = changeMemberInfoRequestDto.getModifiedPassword() != null ? changeMemberInfoRequestDto.getModifiedPassword() : this.getPassword();
-//        this.image = changeMemberInfoRequestDto.getImage() != null ? changeMemberInfoRequestDto.getImage(). : this.getImage();
     }
 
 }

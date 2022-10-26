@@ -6,6 +6,9 @@ import com.example.mini_project.dto.responseDto.MypageResponseDto;
 import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Member;
+import com.example.mini_project.exception.customExceptions.NotFoundImageException;
+import com.example.mini_project.exception.customExceptions.NotFoundMemberException;
+import com.example.mini_project.exception.customExceptions.NotMatchedPasswordException;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.HeartRepository;
 import com.example.mini_project.repository.MemberRepository;
@@ -14,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +30,13 @@ public class MyPageService {
     private final HeartRepository heartRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3UploadService s3UploadService;
 
     public ResponseDto<?> getMypage(MemberDetailsImpl memberDetailsImpl) {
 
         Member member = isPresentMember(memberDetailsImpl);
         if (null == member){
-            return ResponseDto.fail("NOT_FOUND","존재하지 않는 회원입니다.");
+            throw new NotFoundMemberException();
         }
 
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
@@ -58,38 +63,42 @@ public class MyPageService {
         );
     }
 
-    @Transactional(readOnly = true)
-    public Member isPresentMember(MemberDetailsImpl memberDetailsImpl){
-        Optional<Member> member = memberRepository.findById(memberDetailsImpl.getMember().getId());
-        return member.orElse(null);
-    }
-
     @Transactional
-    public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
+    public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) throws IOException {
 
         Member member = memberRepository.findByName(memberDetailsImpl.getUsername()).orElseThrow(
-                () -> new RuntimeException("Not found account")
+                NotFoundMemberException::new
         );
 
-        member.updateInfo(changeMemberInfoRequestDto);
+        if(changeMemberInfoRequestDto.getImage() == null) throw new NotFoundImageException();
+
+        String imageUrl = s3UploadService.upload(changeMemberInfoRequestDto.getImage(), "member");
+
+        member.updateImage(imageUrl);
         return ResponseDto.success("이미지 변경 성공");
     }
 
     @Transactional
     public ResponseDto<?> changePassword(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
 
-        Member member = memberRepository.findByName(memberDetailsImpl.getMember().getName()).orElseThrow(
-                () -> new RuntimeException("Not found account")
+        Member member = memberRepository.findByName(memberDetailsImpl.getUsername()).orElseThrow(
+                NotFoundMemberException::new
         );
 
         if(!passwordEncoder.matches(changeMemberInfoRequestDto.getCurrentPassword(), member.getPassword())){
-            return ResponseDto.fail("NOT_MATCH_PASSWORD", "비밀번호가 일치하지 않습니다.");
+            throw new NotMatchedPasswordException();
         }
 
         changeMemberInfoRequestDto.setModifiedPassword(passwordEncoder.encode(changeMemberInfoRequestDto.getModifiedPassword()));
-//        member.updateInfo(changeMemberInfoRequestDto);
+        member.updatePassword(changeMemberInfoRequestDto);
 
         return ResponseDto.success("비밀번호 변경 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public Member isPresentMember(MemberDetailsImpl memberDetailsImpl){
+        Optional<Member> member = memberRepository.findById(memberDetailsImpl.getMember().getId());
+        return member.orElse(null);
     }
 
 }

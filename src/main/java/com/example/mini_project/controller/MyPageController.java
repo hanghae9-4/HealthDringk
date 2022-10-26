@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.io.IOException;
+
 @RestController
 @RequestMapping(value = "/mypage")
 @RequiredArgsConstructor
@@ -20,13 +23,13 @@ public class MyPageController {
         return myPageService.getMypage(memberDetailsImpl);
     }
 
-    @PutMapping("/image")
-    public ResponseDto<?> changeImage(@RequestBody ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+    @PutMapping( "/image")
+    public ResponseDto<?> changeImage(@ModelAttribute ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl) throws IOException {
         return myPageService.changeImage(changeMemberInfoRequestDto, memberDetailsImpl);
     }
 
-    @PutMapping ("/password")
-    public ResponseDto<?> changePassword(@RequestBody ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
+    @PutMapping("/password")
+    public ResponseDto<?> changePassword(@RequestBody @Valid ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
         return myPageService.changePassword(changeMemberInfoRequestDto, memberDetailsImpl);
     }
 
