@@ -38,9 +38,6 @@ public class Board extends TimeStamped {
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
-    public boolean validateMember(Member member) {
-        return !this.member.equals(member);
-    }
 
     public void update(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
