@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -29,10 +27,9 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> createComment(CommentRequestDto commentRequestDto, Long boardId, Member member) {
 
-        Board board = boardService.isPresentBoard(boardId);
-        if (board == null) {
-            throw new NotFoundBoardException();
-        }
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                NotFoundBoardException::new
+        );
 
         Comment comment = Comment.builder()
                 .content(commentRequestDto.getContent())
@@ -53,23 +50,20 @@ public class CommentService {
                 NotFoundCommentException::new
         );
 
-        Board board = boardService.isPresentBoard(comment.getBoard().getId());
-        if (board == null) {
+        if (!boardRepository.existsById(comment.getBoard().getId())) {
             throw new NotFoundBoardException();
         }
 
-        if (comment.validateMember(member)) {
+        if (comment.getMember().getName().equals(member.getName())) {
             throw new NotValidWriterException();
         }
 
         comment.update(commentRequestDto);
+        commentRepository.save(comment);
+
         return ResponseDto.success("댓글 수정 완료");
     }
 
-    private Comment isPresentComment(Long commentId) {
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
-        return optionalComment.orElse(null);
-    }
 
     @Transactional
     public ResponseDto<?> deleteComment(Long commentId, Member member) {
@@ -78,12 +72,11 @@ public class CommentService {
                 NotFoundCommentException::new
         );
 
-        Board board = boardService.isPresentBoard(comment.getBoard().getId());
-        if (board == null) {
+        if (!boardRepository.existsById(comment.getBoard().getId())) {
             throw new NotFoundBoardException();
         }
 
-        if (comment.validateMember(member)) {
+        if (comment.getMember().getName().equals(member.getName())) {
             throw new NotValidWriterException();
         }
 

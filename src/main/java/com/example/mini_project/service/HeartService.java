@@ -23,12 +23,12 @@ public class HeartService {
     @Transactional
     public ResponseDto<?> heart(Long boardId, MemberDetailsImpl memberDetailsImpl) {
 
-        Board board = isPresentBoard(boardId);
-        if(null == board){
-            throw new NotFoundBoardException();
-        }
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                NotFoundBoardException::new
+        );
 
         Member member = memberDetailsImpl.getMember();
+
         Optional<Heart> heart = heartRepository.findHeartByMemberAndBoardId(member, boardId);
 
         if(heart.isEmpty()) {
@@ -45,9 +45,4 @@ public class HeartService {
 
     }
 
-    @Transactional(readOnly = true)
-    public Board isPresentBoard(Long bordId){
-        Optional<Board> board = boardRepository.findById(bordId);
-        return board.orElse(null);
-    }
 }

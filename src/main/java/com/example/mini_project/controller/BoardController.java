@@ -51,7 +51,7 @@ public class BoardController {
 
     @PutMapping("/boards/{boardId}")
     public ResponseDto<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto,
-                                      @AuthenticationPrincipal MemberDetailsImpl memberDetails){
+                                      @AuthenticationPrincipal MemberDetailsImpl memberDetails) throws IOException {
         return boardService.updateBoard(boardId, boardRequestDto, memberDetails.getMember());
     }
 

@@ -7,7 +7,6 @@ import com.example.mini_project.dto.responseDto.ResponseDto;
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Member;
 import com.example.mini_project.exception.customExceptions.NotFoundImageException;
-import com.example.mini_project.exception.customExceptions.NotFoundMemberException;
 import com.example.mini_project.exception.customExceptions.NotMatchedPasswordException;
 import com.example.mini_project.repository.BoardRepository;
 import com.example.mini_project.repository.HeartRepository;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,15 +30,11 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
 
-    public ResponseDto<?> getMypage(MemberDetailsImpl memberDetailsImpl) {
+    public ResponseDto<?> getMypage(Member member) {
 
-        Member member = isPresentMember(memberDetailsImpl);
-        if (null == member){
-            throw new NotFoundMemberException();
-        }
-
-        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
+        List<Board> boardList = boardRepository.findAllByMemberOrderByCreatedAtDesc(member);
         List<BoardListResponseDto> boardListResponseDtoList = new ArrayList<>();
+
         for(Board board : boardList){
             boardListResponseDtoList.add(
                     BoardListResponseDto.builder()
@@ -64,41 +58,29 @@ public class MyPageService {
     }
 
     @Transactional
-    public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) throws IOException {
-
-        Member member = memberRepository.findByName(memberDetailsImpl.getUsername()).orElseThrow(
-                NotFoundMemberException::new
-        );
+    public ResponseDto<?> changeImage(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, Member member) throws IOException {
 
         if(changeMemberInfoRequestDto.getImage() == null) throw new NotFoundImageException();
 
         String imageUrl = s3UploadService.upload(changeMemberInfoRequestDto.getImage(), "member");
 
         member.updateImage(imageUrl);
+        memberRepository.save(member);
+
         return ResponseDto.success("이미지 변경 성공");
     }
 
     @Transactional
-    public ResponseDto<?> changePassword(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, MemberDetailsImpl memberDetailsImpl) {
-
-        Member member = memberRepository.findByName(memberDetailsImpl.getUsername()).orElseThrow(
-                NotFoundMemberException::new
-        );
+    public ResponseDto<?> changePassword(ChangeMemberInfoRequestDto changeMemberInfoRequestDto, Member member) {
 
         if(!passwordEncoder.matches(changeMemberInfoRequestDto.getCurrentPassword(), member.getPassword())){
             throw new NotMatchedPasswordException();
         }
 
-        changeMemberInfoRequestDto.setModifiedPassword(passwordEncoder.encode(changeMemberInfoRequestDto.getModifiedPassword()));
-        member.updatePassword(changeMemberInfoRequestDto);
+        member.updatePassword(passwordEncoder.encode(changeMemberInfoRequestDto.getModifiedPassword()));
+        memberRepository.save(member);
 
         return ResponseDto.success("비밀번호 변경 성공");
-    }
-
-    @Transactional(readOnly = true)
-    public Member isPresentMember(MemberDetailsImpl memberDetailsImpl){
-        Optional<Member> member = memberRepository.findById(memberDetailsImpl.getMember().getId());
-        return member.orElse(null);
     }
 
 }

@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +54,7 @@ public class BoardService {
                             .heartNum(heartRepository.countByBoard(board))
                             .createdAt(board.getCreatedAt())
                             .build();
-            System.out.println("boardListResponseDto = " + boardListResponseDto);
+
             boardListResponseDtoList.add(boardListResponseDto);
         }
 
@@ -95,10 +94,10 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public ResponseDto<?> getPost(Long boardId, MemberDetailsImpl memberDetails) { // memberDetails == null ->
-        Board board = isPresentBoard(boardId);
-        if (board == null) {
-            throw new NotFoundBoardException();
-        }
+
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                NotFoundBoardException::new
+        );
 
         List<Comment> commentList = commentRepository.findAllByBoardOrderByCreatedAtDesc(board);
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
@@ -122,21 +121,15 @@ public class BoardService {
                 .content(board.getContent())
                 .createdAt(board.getCreatedAt())
                 .heartNum(heartRepository.countByBoard(board))
-//                        .heartOrNot(heartRepository.existsByMemberAndBoard(member, board)) 프론트랑 협의
                 .commentResponseDtoList(commentResponseDtoList)
                 .build();
 
         if (memberDetails != null) {
-            boardResponseDto.updateMemberName(memberDetails.getMember());
+            boolean heartOrNot = heartRepository.existsByMemberAndBoard(memberDetails.getMember(), board);
+            boardResponseDto.updateMemberNameAndHeart(memberDetails.getMember(), heartOrNot);
         }
 
         return ResponseDto.success(boardResponseDto);
-    }
-
-    public Board isPresentBoard(Long boardId) {
-
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
-        return optionalBoard.orElse(null);
     }
 
     @Transactional
@@ -154,27 +147,32 @@ public class BoardService {
         return ResponseDto.success("게시물 생성 성공");
     }
 
-    public ResponseDto<?> updateBoard(Long boardId, BoardRequestDto boardRequestDto, Member member) {
+    @Transactional
+    public ResponseDto<?> updateBoard(Long boardId, BoardRequestDto boardRequestDto, Member member)  {
 
         Board board = boardRepository.findById(boardId).orElseThrow(
                 NotFoundBoardException::new
         );
 
-        if (board.validateMember(member)) {
+        if (board.getMember().getName().equals(member.getName())) {
             throw new NotValidWriterException();
         }
 
         board.update(boardRequestDto);
+
+        boardRepository.save(board);
+
         return ResponseDto.success("게시글 수정 완료");
     }
 
+    @Transactional
     public ResponseDto<?> deletePost(Long boardId, Member member) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(
                 NotFoundBoardException::new
         );
 
-        if (board.validateMember(member)) {
+        if (board.getMember().getName().equals(member.getName())) {
             throw new NotValidWriterException();
         }
 

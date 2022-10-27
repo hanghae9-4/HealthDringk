@@ -25,7 +25,7 @@ public class BoardResponseDto {
 
     private Long heartNum;
 
-    private boolean heartOrNot;
+    private boolean heartOrNot = false;
 
     private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
@@ -38,8 +38,9 @@ public class BoardResponseDto {
         this.createdAt = board.getCreatedAt();
     }
 
-    public void updateMemberName(Member member) {
+    public void updateMemberNameAndHeart(Member member, boolean heartOrNot) {
         this.name = member.getName();
+        this.heartOrNot = heartOrNot;
 
     }
 

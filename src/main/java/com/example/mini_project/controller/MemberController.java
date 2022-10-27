@@ -37,7 +37,7 @@ public class MemberController {
     }
 
     @PostMapping("/check-id")
-    public ResponseDto<?> checkId(@RequestBody CheckIdRequestDto checkIdRequestDto) {
+    public ResponseDto<?> checkId(@RequestBody @Valid CheckIdRequestDto checkIdRequestDto) {
         return memberService.checkId(checkIdRequestDto);
     }
 

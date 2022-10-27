@@ -3,6 +3,7 @@ package com.example.mini_project.repository;
 
 import com.example.mini_project.entity.Board;
 import com.example.mini_project.entity.Category;
+import com.example.mini_project.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    List<Board> findAllByOrderByCreatedAtDesc();
+    List<Board> findAllByMemberOrderByCreatedAtDesc(Member member);
 
     List<Board> findAllByCategory(Category category);
 

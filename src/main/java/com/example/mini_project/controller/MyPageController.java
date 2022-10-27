@@ -20,18 +20,18 @@ public class MyPageController {
 
     @GetMapping
     public ResponseDto<?> mypage(@AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
-        return myPageService.getMypage(memberDetailsImpl);
+        return myPageService.getMypage(memberDetailsImpl.getMember());
     }
 
 
     @PutMapping( "/images")
     public ResponseDto<?> changeImage(@ModelAttribute ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl) throws IOException {
-        return myPageService.changeImage(changeMemberInfoRequestDto, memberDetailsImpl);
+        return myPageService.changeImage(changeMemberInfoRequestDto, memberDetailsImpl.getMember());
     }
 
     @PutMapping("/passwords")
     public ResponseDto<?> changePassword(@RequestBody @Valid ChangeMemberInfoRequestDto changeMemberInfoRequestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetailsImpl){
-        return myPageService.changePassword(changeMemberInfoRequestDto, memberDetailsImpl);
+        return myPageService.changePassword(changeMemberInfoRequestDto, memberDetailsImpl.getMember());
     }
 
 }
